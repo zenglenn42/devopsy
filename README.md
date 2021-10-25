@@ -10,4 +10,4 @@
 
 Are you throwing a bash script together and would like some fu for parsing your command line arguments?
 
-Take a look at this skeleton shell script which leverages ```getopt```, a shell builtin command for doing just that.
+Take a look at this [skeleton shell script](getopt/test_getopt.sh) which leverages ```getopt```, a shell builtin command for doing just that.
