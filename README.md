@@ -13,6 +13,6 @@ My cubby for devops stuff I craft that others my like too.
 
 ## [getopt](#contents)
 
-Are you throwing a bash script together and would like some fu for parsing your command line arguments?
+Are you throwing together a bash script and would like some fu for parsing your command line arguments into variables?
 
 Take a look at this [skeleton shell script](getopt/test_getopt.sh) which leverages ```getopt```, a shell builtin command for doing just that.
