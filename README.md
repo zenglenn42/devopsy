@@ -3,7 +3,7 @@
 ![alt](cc_img/devops-willy-peter-schuab-cc-by-sa-4.0.png)
 Graphic by W.P. Schuab
 
-My cubby for devops stuff I craft that others my like too.
+My cubby for devops stuff I craft that others may like too.
 
 # [Contents](#contents)
 
