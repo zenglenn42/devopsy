@@ -94,9 +94,9 @@ $(CHECKED_MAKE_VERSION_BRAND):
 		case "$${tool}" in \
 			"make") \
 				dotted_min_desired_ver=`echo $${tool_version_brand} | cut -d":" -f2` ;\
-				min_desired_ver=`echo $${dotted_min_desired_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				min_desired_ver=`$(call monotonicVer,$${dotted_min_desired_ver})` ;\
 				dotted_actual_ver=`make -v 2>&1 | head -1 | $(AWK) '{print $$3}' | tr -d '"' | tr -d "'"` ;\
-				actual_ver=`echo $${dotted_actual_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				actual_ver=`$(call monotonicVer,$${dotted_actual_ver})` ;\
 				$(call echol,"chkver $${tool} >= $${dotted_min_desired_ver}","CHKVER $${tool}    >= $${dotted_min_desired_ver}") ;\
 				if [ $${actual_ver} -lt $${min_desired_ver} ];then \
 					$(call echol,"ERROR: make version is $${dotted_actual_ver}  Expecting version  >= $${dotted_min_desired_ver}") ;\

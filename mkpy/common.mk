@@ -699,6 +699,10 @@ $(CHECKED_TOOLS):
 # Verify that certain build tools are at the correct version and brand.
 # (e.g., OpenJDK 1.7)
 #----------------------------------------------------------------------------
+define monotonicVer
+        echo $1 |tr "." " "|awk '{printf("scale=2;1000000*l(%d+1)+10000*l(%d+1)+100*l(%d+1)\n",$$1,$$2,$$3)}'|bc -l|cut -d"." -f1
+endef
+
 CHECKED_TOOLS_VERSION_BRAND = .checkedtools_version_brand
 $(CHECKED_TOOLS_VERSION_BRAND):
 	@for tool_version_brand in $(CHECK_TOOLS_VERSION_BRAND) ;\
@@ -707,9 +711,9 @@ $(CHECKED_TOOLS_VERSION_BRAND):
 		case "$${tool}" in \
 			"gcc") \
 				dotted_min_desired_ver=`echo $${tool_version_brand} | cut -d":" -f2` ;\
-				min_desired_ver=`echo $${dotted_min_desired_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				min_desired_ver=`$(call monotonicVer,$${dotted_min_desired_ver})` ;\
 				dotted_actual_ver=`$(GCC) -dumpversion 2>&1 | head -1 | $(AWK) '{print $$1}' | tr -d '"' | tr -d "'" | cut -d"." -f1-3|cut -d"_" -f1` ;\
-				actual_ver=`echo $${dotted_actual_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				actual_ver=`$(call monotonicVer,$${dotted_actual_ver})` ;\
 				$(call echol,"chkver $${tool} >= $${dotted_min_desired_ver}","CHKVER $${tool}     >= $${dotted_min_desired_ver}") ;\
 				if [ $${actual_ver} -lt $${min_desired_ver} ];then \
 					$(call echol,"ERROR: gcc version is $${dotted_actual_ver}  Expecting version  >= $${dotted_min_desired_ver}") ;\
@@ -718,9 +722,9 @@ $(CHECKED_TOOLS_VERSION_BRAND):
 				;;\
 			"java") \
 				dotted_min_desired_ver=`echo $${tool_version_brand} | cut -d":" -f2` ;\
-				min_desired_ver=`echo $${dotted_min_desired_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				min_desired_ver=`$(call monotonicVer,$${dotted_min_desired_ver})` ;\
 				dotted_actual_ver=`$(JAVA) -version 2>&1 | grep "^java version" | $(AWK) '{print $$3}' | tr -d '"' | tr -d "'" | cut -d"." -f1-3|cut -d"_" -f1` ;\
-				actual_ver=`echo $${dotted_actual_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				actual_ver=`$(call monotonicVer,$${dotted_actual_ver})` ;\
 				$(call echol,"chkver $${tool} >= $${dotted_min_desired_ver}","CHKVER $${tool}    >= $${dotted_min_desired_ver}") ;\
 				if [ $${actual_ver} -lt $${min_desired_ver} ];then \
 					$(call echol,"ERROR: java version is $${dotted_actual_ver}  Expecting version  >= $${dotted_min_desired_ver}") ;\
@@ -736,9 +740,9 @@ $(CHECKED_TOOLS_VERSION_BRAND):
 				;;\
 			"make") \
 				dotted_min_desired_ver=`echo $${tool_version_brand} | cut -d":" -f2` ;\
-				min_desired_ver=`echo $${dotted_min_desired_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				min_desired_ver=`$(call monotonicVer,$${dotted_min_desired_ver})` ;\
 				dotted_actual_ver=`make -v 2>&1 | head -1 | $(AWK) '{print $$3}' | tr -d '"' | tr -d "'"` ;\
-				actual_ver=`echo $${dotted_actual_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				actual_ver=`$(call monotonicVer,$${dotted_actual_ver})` ;\
 				$(call echol,"chkver $${tool} >= $${dotted_min_desired_ver}","CHKVER $${tool}    >= $${dotted_min_desired_ver}") ;\
 				if [ $${actual_ver} -lt $${min_desired_ver} ];then \
 					$(call echol,"ERROR: make version is $${dotted_actual_ver}  Expecting version  >= $${dotted_min_desired_ver}") ;\
@@ -756,9 +760,9 @@ $(CHECKED_TOOLS_VERSION_BRAND):
 				;;\
 			"mvn") \
 				dotted_min_desired_ver=`echo $${tool_version_brand} | cut -d":" -f2` ;\
-				min_desired_ver=`echo $${dotted_min_desired_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				min_desired_ver=`$(call monotonicVer,$${dotted_min_desired_ver})` ;\
 				dotted_actual_ver=`$(MVN) -version 2>&1 | head -1 | $(AWK) '{print $$3}' | tr -d '"' | tr -d "'" | cut -d"." -f1-3|cut -d"_" -f1` ;\
-				actual_ver=`echo $${dotted_actual_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				actual_ver=`$(call monotonicVer,$${dotted_actual_ver})` ;\
 				$(call echol,"chkver $${tool}     >= $${dotted_min_desired_ver}","CHKVER $${tool}     >= $${dotted_min_desired_ver}") ;\
 				if [ $${actual_ver} -lt $${min_desired_ver} ];then \
 					$(call echol,"ERROR: mvn version is $${dotted_actual_ver}  Expecting version  >= $${dotted_min_desired_ver}") ;\
@@ -774,9 +778,9 @@ $(CHECKED_TOOLS_VERSION_BRAND):
 				;;\
 			"pip") \
 				dotted_min_desired_ver=`echo $${tool_version_brand} | cut -d":" -f2` ;\
-				min_desired_ver=`echo $${dotted_min_desired_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				min_desired_ver=`$(call monotonicVer,$${dotted_min_desired_ver})` ;\
 				dotted_actual_ver=`$(PIP) -V 2>&1 | head -1 | $(AWK) '{print $$2}' | tr -d '"' | tr -d "'"` ;\
-				actual_ver=`echo $${dotted_actual_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				actual_ver=`$(call monotonicVer,$${dotted_actual_ver})` ;\
 				$(call echol,"CHKVER $${tool}     >= $${dotted_min_desired_ver}") ;\
 				if [ $${actual_ver} -lt $${min_desired_ver} ];then \
 					$(call echol,"ERROR: mvn version is $${dotted_actual_ver}  Expecting version  >= $${dotted_min_desired_ver}") ;\
@@ -785,9 +789,9 @@ $(CHECKED_TOOLS_VERSION_BRAND):
 				;;\
 			"python") \
 				dotted_min_desired_ver=`echo $${tool_version_brand} | cut -d":" -f2` ;\
-				min_desired_ver=`echo $${dotted_min_desired_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				min_desired_ver=`$(call monotonicVer,$${dotted_min_desired_ver})` ;\
 				dotted_actual_ver=`$(PYTHON) -V 2>&1 | head -1 | $(AWK) '{print $$2}' | tr -d '"' | tr -d "'"` ;\
-				actual_ver=`echo $${dotted_actual_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				actual_ver=`$(call monotonicVer,$${dotted_actual_ver})` ;\
 				$(call echol,"CHKVER $${tool}  >= $${dotted_min_desired_ver}") ;\
 				if [ $${actual_ver} -lt $${min_desired_ver} ];then \
 					$(call echol,"ERROR: python version is $${dotted_actual_ver}  Expecting version  >= $${dotted_min_desired_ver}") ;\
@@ -796,9 +800,9 @@ $(CHECKED_TOOLS_VERSION_BRAND):
 				;;\
 			"readelf") \
 				dotted_min_desired_ver=`echo $${tool_version_brand} | cut -d":" -f2` ;\
-				min_desired_ver=`echo $${dotted_min_desired_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				min_desired_ver=`$(call monotonicVer,$${dotted_min_desired_ver})` ;\
 				dotted_actual_ver=`$(READELF) -v | head -1 | sed -e "s|[^0-9,.,-, ]||g" | cut -d"." -f1-3 | xargs echo` ;\
-				actual_ver=`echo $${dotted_actual_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				actual_ver=`$(call monotonicVer,$${dotted_actual_ver})` ;\
 				$(call echol,"CHKVER $${tool} >= $${dotted_min_desired_ver}") ;\
 				if [ $${actual_ver} -lt $${min_desired_ver} ];then \
 					$(call echol,"ERROR: readelf version is $${dotted_actual_ver}  Expecting version  >= $${dotted_min_desired_ver}") ;\
@@ -807,9 +811,9 @@ $(CHECKED_TOOLS_VERSION_BRAND):
 				;;\
 			"virtualenv") \
 				dotted_min_desired_ver=`echo $${tool_version_brand} | cut -d":" -f2` ;\
-				min_desired_ver=`echo $${dotted_min_desired_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				min_desired_ver=`$(call monotonicVer,$${dotted_min_desired_ver})` ;\
 				dotted_actual_ver=`$(VIRTUALENV) --version 2>&1 | head -1 | $(AWK) '{print $$1}' | tr -d '"' | tr -d "'" | cut -d"." -f1-3|cut -d"_" -f1` ;\
-				actual_ver=`echo $${dotted_actual_ver} |tr "." " "|$(AWK) '{printf("(%d*100)+(%d*10)+(%d)\n",$$1,$$2,$$3)}'|$(BC)` ;\
+				actual_ver=`$(call monotonicVer,$${dotted_actual_ver})` ;\
 				$(call echol,"chkver $${tool} >= $${dotted_min_desired_ver}","CHKVER $${tool} >= $${dotted_min_desired_ver}") ;\
 				if [ $${actual_ver} -lt $${min_desired_ver} ];then \
 					$(call echol,"ERROR: virtualenv version is $${dotted_actual_ver}  Expecting version  >= $${dotted_min_desired_ver}") ;\
