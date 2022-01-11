@@ -20,16 +20,17 @@ Take a look at this [skeleton shell script](getopt/test_getopt.sh) which leverag
 
 ## [mkpy](#contents)
 
-Sometimes in the devops world, you need some makefile fu.  
+Part of the devops world includes build automation.  
 
-Here's a non-trivial example of how to use GNU make to perform a manifest-driven build of python from source.
+If you ever find yourself down a dark alley and need to throw down with some makefile fu, here's a non-trivial example that builds python from a downloaded
+source bundle:
 
 It demonstrates:
 
 * Use of target / dependencies to make your builds idempotent and efficient.
 * Downloading the source bundle from an upstream website with optional md5 bundle check.
 * Verbosity control (so build warnings & errors don't go unnoticed amidst the chatter).
-* Component-based autologging of build output.
+* Component-based autologging of build output (see python.log).
 * Manifest-based installs for surgical uninstalls if your dev work flow requires that.
 * Post-build checking of shared library dependencies and runtime search paths (i.e., rpath audit) so you understands the runtime behavior of your build targets for added insight and security.
 
